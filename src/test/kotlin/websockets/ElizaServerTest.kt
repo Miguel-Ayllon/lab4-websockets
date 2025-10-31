@@ -39,7 +39,6 @@ class ElizaServerTest {
     @Test
     fun onChat() {
         logger.info { "Test thread" }
-        // Latch(4) espera 4 mensajes: 3 de saludo (como en onOpen) y 1 respuesta del bot
         val latch = CountDownLatch(4)
         val list = mutableListOf<String>()
 
@@ -47,6 +46,7 @@ class ElizaServerTest {
         client.connect("ws://localhost:$port/eliza")
         latch.await()
         val size = list.size
+        
         // 1. EXPLAIN WHY size = list.size IS NECESSARY
         // Capturamos el tamaño de la lista *después* de que el latch se libera.
         // Esto asegura que tenemos el estado final para la aserción.
@@ -58,12 +58,12 @@ class ElizaServerTest {
         // No se puede usar assertEquals(4, size) porque las pruebas de WebSocket son asíncronas
         // y pueden ser inestables (brittle). El servidor podría enviar mensajes adicionales
         // después de que el latch(4) se haya liberado.
-        // Solo nos importa que *como mínimo* hayamos recibido los 4 mensajes esperados de nuestra
-        // conversación de prueba, por eso comprobamos un intervalo (size >= 4).
+        // Solo nos importa que *como mínimo* hayamos recibido los 4 mensajes esperados.
 
         // 4. COMPLETE assertEquals(XXX, list[XXX])
-        // Verificamos el primer mensaje de saludo (consistente con onOpen)
         assertEquals("The doctor is in.", list[0])
+        assertEquals("What's on your mind?", list[1])
+        assertEquals("---", list[2])
         val response = list[3]
         assertTrue(
             response.contains("you", ignoreCase = true) && response.contains("sad", ignoreCase = true)
@@ -99,13 +99,11 @@ class ComplexClient(
         latch.countDown()
 
         // 5. COMPLETE if (expression) {
-        // Asumiendo que el servidor envía 3 mensajes de saludo (como en el test onOpen),
-        // enviamos nuestro mensaje después de recibir el tercero.
-        if (list.size == 3) {
+        if (message.contains("What's on your mind?")) {
             // 6. COMPLETE   sentence
-            // Enviamos el mensaje de ejemplo sugerido en la guía
             session.asyncRemote.sendText("I am feeling sad")
         }
+        logger.info { "Received messages: ${list.size}" }
     }
 }
 
