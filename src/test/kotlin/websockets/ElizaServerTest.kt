@@ -46,7 +46,7 @@ class ElizaServerTest {
         client.connect("ws://localhost:$port/eliza")
         latch.await()
         val size = list.size
-        
+
         // 1. EXPLAIN WHY size = list.size IS NECESSARY
         // Capturamos el tamaño de la lista *después* de que el latch se libera.
         // Esto asegura que tenemos el estado final para la aserción.
@@ -66,7 +66,7 @@ class ElizaServerTest {
         assertEquals("---", list[2])
         val response = list[3]
         assertTrue(
-            response.contains("you", ignoreCase = true) && response.contains("sad", ignoreCase = true)
+            response.contains("you", ignoreCase = true) && response.contains("sad", ignoreCase = true),
         ) { "La respuesta del doctor '$response' debería reflejar 'you' y 'sad'" }
     }
 }

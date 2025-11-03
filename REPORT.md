@@ -47,5 +47,4 @@ I learned several key concepts from this assignment:
 
 ### Original Work
 
-* 100% of the submitted work is original.
 * All implementation logic in `ElizaServerTest.kt` and `ComplexClient`, as well as the writing of this `REPORT.md`, was done manually by me.
